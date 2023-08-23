@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список сообщений</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../styles/dark-mode.css">
+    <style>
+        /* Добавляем стиль для переноса строк в сообщениях */
+        .message-text {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-4">Список сообщений</h1>
+    {{range $chatID, $messages := .MessageGroups}}
+    <h2>Чат ID: {{$chatID}}</h2>
+    <ul class="list-group mt-4">
+        {{range $messages}}
+        <li class="list-group-item">
+            <strong>{{.UserName}}</strong>: <span class="message-text">{{.Text}}</span>
+            {{if .IsRead}}
+            <span class="text-muted">(прочитано)</span>
+            {{else}}
+            <!-- Добавляем поле для MessageID -->
+            <span class="text-muted">(MessageID: {{.MessageID}})</span>
+            <form action="/reply" method="post" class="mt-2">
+                <input type="hidden" name="chatID" value="{{.ChatID}}">
+                <div class="input-group">
+                    <textarea name="response" rows="4" class="form-control" placeholder="Ответить..."></textarea>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </div>
+                </div>
+            </form>
+            <form action="/markread" method="post" class="mt-2">
+                <input type="hidden" name="messageID" value="{{.MessageID}}">
+                <button type="submit" class="btn btn-success">Отметить как прочитанное</button>
+            </form>
+            {{end}}
+        </li>
+        {{end}}
+    </ul>
+    {{end}}
+</div>
+</body>
+</html>
